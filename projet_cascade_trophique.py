@@ -308,9 +308,6 @@ if __name__ == "__main__":
     dossier = "figures"
     os.makedirs(dossier, exist_ok=True)
 
-    
-    # 1) Comparaison des méthodes sur le scénario de base
-    
     debut = time.perf_counter()
     t_euler, U_euler = euler_explicite(u0, t0, tf, h)
     temps_euler = time.perf_counter() - debut
@@ -327,126 +324,8 @@ if __name__ == "__main__":
     t_base, U_base = euler_implicite_newton(u0, t0, tf, h)
     temps_newton = time.perf_counter() - debut
 
-    # Comparaison méthodes : V
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_euler, U_euler[:, 0], label="Euler explicite")
-    plt.plot(t_rk4, U_rk4[:, 0], label="RK4")
-    plt.plot(t_pf, U_pf[:, 0], label="Euler implicite point fixe")
-    plt.plot(t_base, U_base[:, 0], label="Euler implicite Newton")
-    plt.xlabel("Temps")
-    plt.ylabel("V(t)")
-    plt.title("Comparaison des méthodes : V(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "comparaison_methodes_V.png"), dpi=180)
-    plt.close()
 
-    # Comparaison méthodes : N
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_euler, U_euler[:, 1], label="Euler explicite")
-    plt.plot(t_rk4, U_rk4[:, 1], label="RK4")
-    plt.plot(t_pf, U_pf[:, 1], label="Euler implicite point fixe")
-    plt.plot(t_base, U_base[:, 1], label="Euler implicite Newton")
-    plt.xlabel("Temps")
-    plt.ylabel("N(t)")
-    plt.title("Comparaison des méthodes : N(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "comparaison_methodes_N.png"), dpi=180)
-    plt.close()
-
-    # Comparaison méthodes : D
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_euler, U_euler[:, 2], label="Euler explicite")
-    plt.plot(t_rk4, U_rk4[:, 2], label="RK4")
-    plt.plot(t_pf, U_pf[:, 2], label="Euler implicite point fixe")
-    plt.plot(t_base, U_base[:, 2], label="Euler implicite Newton")
-    plt.xlabel("Temps")
-    plt.ylabel("D(t)")
-    plt.title("Comparaison des méthodes : D(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "comparaison_methodes_D.png"), dpi=180)
-    plt.close()
-
-    # Comparaison méthodes : W
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_euler, U_euler[:, 3], label="Euler explicite")
-    plt.plot(t_rk4, U_rk4[:, 3], label="RK4")
-    plt.plot(t_pf, U_pf[:, 3], label="Euler implicite point fixe")
-    plt.plot(t_base, U_base[:, 3], label="Euler implicite Newton")
-    plt.xlabel("Temps")
-    plt.ylabel("W(t)")
-    plt.title("Comparaison des méthodes : W(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "comparaison_methodes_W.png"), dpi=180)
-    plt.close()
-
-    # Comparaison méthodes : B
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_euler, U_euler[:, 4], label="Euler explicite")
-    plt.plot(t_rk4, U_rk4[:, 4], label="RK4")
-    plt.plot(t_pf, U_pf[:, 4], label="Euler implicite point fixe")
-    plt.plot(t_base, U_base[:, 4], label="Euler implicite Newton")
-    plt.xlabel("Temps")
-    plt.ylabel("B(t)")
-    plt.title("Comparaison des méthodes : B(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "comparaison_methodes_B.png"), dpi=180)
-    plt.close()
-
-   
-    # 2) Influence du pas de temps sur W
-    
-
-    # Grands pas : divergence
-    t_h2, U_h2 = euler_implicite_newton(u0, t0, tf, 2.0)
-    t_h1, U_h1 = euler_implicite_newton(u0, t0, tf, 1.0)
-    t_h05, U_h05 = euler_implicite_newton(u0, t0, tf, 0.5)
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_h2, U_h2[:, 3], label="h = 2")
-    plt.plot(t_h1, U_h1[:, 3], label="h = 1")
-    plt.plot(t_h05, U_h05[:, 3], label="h = 0.5")
-    plt.xlabel("Temps")
-    plt.ylabel("W(t)")
-    plt.title("Divergence avec des grands pas de temps sur W(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "pas_temps_W_divergence.png"), dpi=180)
-    plt.close()
-
-    # Petits pas : convergence
-    t_h01, U_h01 = euler_implicite_newton(u0, t0, tf, 0.1)
-    t_h005, U_h005 = euler_implicite_newton(u0, t0, tf, 0.05)
-    t_h001, U_h001 = euler_implicite_newton(u0, t0, tf, 0.01)
-    t_h0005, U_h0005 = euler_implicite_newton(u0, t0, tf, 0.005)
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(t_h01, U_h01[:, 3], label="h = 0.1")
-    plt.plot(t_h005, U_h005[:, 3], label="h = 0.05")
-    plt.plot(t_h001, U_h001[:, 3], label="h = 0.01")
-    plt.plot(t_h0005, U_h0005[:, 3], label="h = 0.005")
-    plt.xlabel("Temps")
-    plt.ylabel("W(t)")
-    plt.title("Convergence avec des petits pas de temps sur W(t)")
-    plt.grid(True)
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "pas_temps_W_convergence.png"), dpi=180)
-    plt.close()
-
-    
-    # 3) Scénario de base
-    
+    # 1) Scénario de base
 
     plt.figure(figsize=(8, 4))
     plt.plot(t_base, U_base[:, 0])
@@ -496,9 +375,183 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "base_predateurs.png"), dpi=180)
     plt.close()
 
+
+    # 2) Comparaison des méthodes avec h = 0.05
     
-    # 4) Effet du prélèvement humain muW
+
+    # Comparaison méthodes avec h = 0.05 : N(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler, U_euler[:, 1], label="Euler explicite")
+    plt.plot(t_rk4, U_rk4[:, 1], label="RK4")
+    plt.plot(t_pf, U_pf[:, 1], label="Euler implicite point fixe")
+    plt.plot(t_base, U_base[:, 1], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("N(t)")
+    plt.title("Comparaison des méthodes avec h = 0.05 : N(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_N.png"), dpi=180)
+    plt.close()
+
+    # Comparaison méthodes avec h = 0.05 : D(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler, U_euler[:, 2], label="Euler explicite")
+    plt.plot(t_rk4, U_rk4[:, 2], label="RK4")
+    plt.plot(t_pf, U_pf[:, 2], label="Euler implicite point fixe")
+    plt.plot(t_base, U_base[:, 2], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("D(t)")
+    plt.title("Comparaison des méthodes avec h = 0.05 : D(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_D.png"), dpi=180)
+    plt.close()
+
+    # Comparaison méthodes avec h = 0.05 : W(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler, U_euler[:, 3], label="Euler explicite")
+    plt.plot(t_rk4, U_rk4[:, 3], label="RK4")
+    plt.plot(t_pf, U_pf[:, 3], label="Euler implicite point fixe")
+    plt.plot(t_base, U_base[:, 3], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("W(t)")
+    plt.title("Comparaison des méthodes avec h = 0.05 : W(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_W.png"), dpi=180)
+    plt.close()
+
+    # Comparaison méthodes avec h = 0.05 : B(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler, U_euler[:, 4], label="Euler explicite")
+    plt.plot(t_rk4, U_rk4[:, 4], label="RK4")
+    plt.plot(t_pf, U_pf[:, 4], label="Euler implicite point fixe")
+    plt.plot(t_base, U_base[:, 4], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("B(t)")
+    plt.title("Comparaison des méthodes avec h = 0.05 : B(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_B.png"), dpi=180)
+    plt.close()
+
+
     
+    # 3) Comparaison des méthodes avec h = 0.5
+    
+    h_grand = 0.5
+
+    t_euler_hg, U_euler_hg = euler_explicite(u0, t0, tf, h_grand)
+    t_rk4_hg, U_rk4_hg = rk4(u0, t0, tf, h_grand)
+    t_pf_hg, U_pf_hg = euler_implicite_point_fixe(u0, t0, tf, h_grand)
+    t_newton_hg, U_newton_hg = euler_implicite_newton(u0, t0, tf, h_grand)
+
+    # Comparaison méthodes avec h = 0.5 : N(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler_hg, U_euler_hg[:, 1], label="Euler explicite")
+    plt.plot(t_rk4_hg, U_rk4_hg[:, 1], label="RK4")
+    plt.plot(t_pf_hg, U_pf_hg[:, 1], label="Euler implicite point fixe")
+    plt.plot(t_newton_hg, U_newton_hg[:, 1], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("N(t)")
+    plt.title("Comparaison des méthodes avec h = 0.5 : N(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_N.png"), dpi=180)
+    plt.close()
+
+    # Comparaison méthodes avec h = 0.5 : D(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler_hg, U_euler_hg[:, 2], label="Euler explicite")
+    plt.plot(t_rk4_hg, U_rk4_hg[:, 2], label="RK4")
+    plt.plot(t_pf_hg, U_pf_hg[:, 2], label="Euler implicite point fixe")
+    plt.plot(t_newton_hg, U_newton_hg[:, 2], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("D(t)")
+    plt.title("Comparaison des méthodes avec h = 0.5 : D(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_D.png"), dpi=180)
+    plt.close()
+
+    # Comparaison méthodes avec h = 0.5 : W(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler_hg, U_euler_hg[:, 3], label="Euler explicite")
+    plt.plot(t_rk4_hg, U_rk4_hg[:, 3], label="RK4")
+    plt.plot(t_pf_hg, U_pf_hg[:, 3], label="Euler implicite point fixe")
+    plt.plot(t_newton_hg, U_newton_hg[:, 3], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("W(t)")
+    plt.title("Comparaison des méthodes avec h = 0.5 : W(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_W.png"), dpi=180)
+    plt.close()
+
+    # Comparaison méthodes avec h = 0.5 : B(t)
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler_hg, U_euler_hg[:, 4], label="Euler explicite")
+    plt.plot(t_rk4_hg, U_rk4_hg[:, 4], label="RK4")
+    plt.plot(t_pf_hg, U_pf_hg[:, 4], label="Euler implicite point fixe")
+    plt.plot(t_newton_hg, U_newton_hg[:, 4], label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("B(t)")
+    plt.title("Comparaison des méthodes avec h = 0.5 : B(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_B.png"), dpi=180)
+    plt.close()
+
+    # 4) Influence du pas de temps sur W(t)
+
+    # Grands pas : divergence
+    t_h2, U_h2 = euler_implicite_newton(u0, t0, tf, 2.0)
+    t_h1, U_h1 = euler_implicite_newton(u0, t0, tf, 1.0)
+    t_h05, U_h05 = euler_implicite_newton(u0, t0, tf, 0.5)
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_h2, U_h2[:, 3], label="h = 2")
+    plt.plot(t_h1, U_h1[:, 3], label="h = 1")
+    plt.plot(t_h05, U_h05[:, 3], label="h = 0.5")
+    plt.xlabel("Temps")
+    plt.ylabel("W(t)")
+    plt.title("Divergence avec des grands pas de temps sur W(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "pas_temps_W_divergence.png"), dpi=180)
+    plt.close()
+
+    # Petits pas : convergence
+    t_h01, U_h01 = euler_implicite_newton(u0, t0, tf, 0.1)
+    t_h005, U_h005 = euler_implicite_newton(u0, t0, tf, 0.05)
+    t_h001, U_h001 = euler_implicite_newton(u0, t0, tf, 0.01)
+    t_h0005, U_h0005 = euler_implicite_newton(u0, t0, tf, 0.005)
+
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_h01, U_h01[:, 3], label="h = 0.1")
+    plt.plot(t_h005, U_h005[:, 3], label="h = 0.05")
+    plt.plot(t_h001, U_h001[:, 3], label="h = 0.01")
+    plt.plot(t_h0005, U_h0005[:, 3], label="h = 0.005")
+    plt.xlabel("Temps")
+    plt.ylabel("W(t)")
+    plt.title("Convergence avec des petits pas de temps sur W(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "pas_temps_W_convergence.png"), dpi=180)
+    plt.close()
+
+
+    # 5) Effet du prélèvement humain muW
 
     ancien_muW = muW
 
@@ -516,7 +569,6 @@ if __name__ == "__main__":
 
     muW = ancien_muW
 
-    # Effet prélèvement : V
     plt.figure(figsize=(8, 4))
     plt.plot(t_mu0, U_mu0[:, 0], label="muW = 0.0")
     plt.plot(t_mu01, U_mu01[:, 0], label="muW = 0.1")
@@ -531,7 +583,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "prelevement_V.png"), dpi=180)
     plt.close()
 
-    # Effet prélèvement : N
     plt.figure(figsize=(8, 4))
     plt.plot(t_mu0, U_mu0[:, 1], label="muW = 0.0")
     plt.plot(t_mu01, U_mu01[:, 1], label="muW = 0.1")
@@ -546,7 +597,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "prelevement_N.png"), dpi=180)
     plt.close()
 
-    # Effet prélèvement : D
     plt.figure(figsize=(8, 4))
     plt.plot(t_mu0, U_mu0[:, 2], label="muW = 0.0")
     plt.plot(t_mu01, U_mu01[:, 2], label="muW = 0.1")
@@ -561,7 +611,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "prelevement_D.png"), dpi=180)
     plt.close()
 
-    # Effet prélèvement : W
     plt.figure(figsize=(8, 4))
     plt.plot(t_mu0, U_mu0[:, 3], label="muW = 0.0")
     plt.plot(t_mu01, U_mu01[:, 3], label="muW = 0.1")
@@ -576,7 +625,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "prelevement_W.png"), dpi=180)
     plt.close()
 
-    # Effet prélèvement : B
     plt.figure(figsize=(8, 4))
     plt.plot(t_mu0, U_mu0[:, 4], label="muW = 0.0")
     plt.plot(t_mu01, U_mu01[:, 4], label="muW = 0.1")
@@ -591,9 +639,8 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "prelevement_B.png"), dpi=180)
     plt.close()
 
-    
-    # 5) Scénario Yellowstone
-    
+
+    # 6) Scénario Yellowstone
 
     u0_yellowstone = np.array([V0, N0, D0, 0.0001, B0])
 
@@ -607,7 +654,6 @@ if __name__ == "__main__":
     t_y = np.concatenate((t1, t2[1:]))
     U_y = np.vstack((U1, U2[1:]))
 
-    # Yellowstone : V
     plt.figure(figsize=(8, 4))
     plt.plot(t_base, U_base[:, 0], label="Scénario de base")
     plt.plot(t_y, U_y[:, 0], "--", label="Yellowstone")
@@ -621,7 +667,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "yellowstone_V.png"), dpi=180)
     plt.close()
 
-    # Yellowstone : N
     plt.figure(figsize=(8, 4))
     plt.plot(t_base, U_base[:, 1], label="Scénario de base")
     plt.plot(t_y, U_y[:, 1], "--", label="Yellowstone")
@@ -635,7 +680,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "yellowstone_N.png"), dpi=180)
     plt.close()
 
-    # Yellowstone : D
     plt.figure(figsize=(8, 4))
     plt.plot(t_base, U_base[:, 2], label="Scénario de base")
     plt.plot(t_y, U_y[:, 2], "--", label="Yellowstone")
@@ -649,7 +693,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "yellowstone_D.png"), dpi=180)
     plt.close()
 
-    # Yellowstone : W
     plt.figure(figsize=(8, 4))
     plt.plot(t_base, U_base[:, 3], label="Scénario de base")
     plt.plot(t_y, U_y[:, 3], "--", label="Yellowstone")
@@ -663,7 +706,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "yellowstone_W.png"), dpi=180)
     plt.close()
 
-    # Yellowstone : B
     plt.figure(figsize=(8, 4))
     plt.plot(t_base, U_base[:, 4], label="Scénario de base")
     plt.plot(t_y, U_y[:, 4], "--", label="Yellowstone")
@@ -677,14 +719,11 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "yellowstone_B.png"), dpi=180)
     plt.close()
 
-    
-    # 6) Affichage console
-    
 
-    
+    # 7) Affichage console
+
     print("Temps de calcul")
     print("Euler explicite :", round(temps_euler, 4), "s")
     print("RK4 :", round(temps_rk4, 4), "s")
     print("Euler implicite point fixe :", round(temps_pf, 4), "s")
     print("Euler implicite Newton + LU :", round(temps_newton, 4), "s")
-    
