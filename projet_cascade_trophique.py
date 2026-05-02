@@ -681,10 +681,10 @@ if __name__ == "__main__":
     # 6) Affichage console
     
 
-    print("-" * 70)
+    
     print("Temps de calcul")
     print("Euler explicite :", round(temps_euler, 4), "s")
     print("RK4 :", round(temps_rk4, 4), "s")
     print("Euler implicite point fixe :", round(temps_pf, 4), "s")
     print("Euler implicite Newton + LU :", round(temps_newton, 4), "s")
-    print("-" * 70)
+    
