@@ -80,6 +80,7 @@ def F(t, u):
     kappaD = KD * V / (VstarD + V)
 
     phiW = cWN * N / (W + beta * N) + cWD * D / (hWD + D)
+    phiW = max(phiW, 1e-12) # pour ne pas avoir de valeurs négative
 
     dV = rV * V * (1.0 - V / KV) - alphaN * V * N / (nuN + V) - alphaD * V * D / (nuD + V) - alphaB * V * B / (nuB + V)
 
