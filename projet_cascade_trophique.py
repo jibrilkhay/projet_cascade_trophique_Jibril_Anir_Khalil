@@ -232,6 +232,8 @@ def newton(G, x0, tol=1e-9, max_iter=20):
     for k in range(max_iter):
         gx = G(x)
 
+        if np.linalg.norm(gx) < tol:
+            return x
 
         J = jacobienne_numerique(G, x)
         delta = resolution_lu(J, -gx)
@@ -299,8 +301,7 @@ def euler_implicite_point_fixe(u0, t0, tf, h, tol=1e-9, max_iter=200):
 
     return t, U
 
-dossier = "figures"
-os.makedirs(dossier, exist_ok=True)
+
 if __name__ == "__main__":
 
     dossier = "figures"
