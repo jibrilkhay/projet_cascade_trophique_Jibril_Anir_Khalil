@@ -512,42 +512,68 @@ if __name__ == "__main__":
 
     # 4) Influence du pas de temps sur W(t)
 
-    # Grands pas : divergence
+    # Grands pas : influence du pas de temps
     t_h2, U_h2 = euler_implicite_newton(u0, t0, tf, 2.0)
+    t_h15, U_h15 = euler_implicite_newton(u0, t0, tf, 1.5)
     t_h1, U_h1 = euler_implicite_newton(u0, t0, tf, 1.0)
     t_h05, U_h05 = euler_implicite_newton(u0, t0, tf, 0.5)
 
     plt.figure(figsize=(8, 4))
     plt.plot(t_h2, U_h2[:, 3], label="h = 2")
+    plt.plot(t_h15, U_h15[:, 3], label="h = 1.5")
     plt.plot(t_h1, U_h1[:, 3], label="h = 1")
     plt.plot(t_h05, U_h05[:, 3], label="h = 0.5")
     plt.xlabel("Temps")
     plt.ylabel("W(t)")
-    plt.title("Divergence avec des grands pas de temps sur W(t)")
+    plt.title("Influence de grands pas de temps sur W(t)")
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
     plt.savefig(os.path.join(dossier, "pas_temps_W_divergence.png"), dpi=180)
     plt.close()
+    
+    # Influence des grands pas de temps sur N(t)
 
-    # Petits pas : convergence
-    t_h01, U_h01 = euler_implicite_newton(u0, t0, tf, 0.1)
-    t_h005, U_h005 = euler_implicite_newton(u0, t0, tf, 0.05)
-    t_h001, U_h001 = euler_implicite_newton(u0, t0, tf, 0.01)
-    t_h0005, U_h0005 = euler_implicite_newton(u0, t0, tf, 0.005)
-
+    t_h2, U_h2 = euler_implicite_newton(u0, t0, tf, 2.0)
+    t_h15, U_h15 = euler_implicite_newton(u0, t0, tf, 1.5)
+    t_h1, U_h1 = euler_implicite_newton(u0, t0, tf, 1.0)
+    
     plt.figure(figsize=(8, 4))
-    plt.plot(t_h01, U_h01[:, 3], label="h = 0.1")
-    plt.plot(t_h005, U_h005[:, 3], label="h = 0.05")
-    plt.plot(t_h001, U_h001[:, 3], label="h = 0.01")
-    plt.plot(t_h0005, U_h0005[:, 3], label="h = 0.005")
+    plt.plot(t_h2, U_h2[:, 1], label="h = 2")
+    plt.plot(t_h15, U_h15[:, 1], label="h = 1.5")
+    plt.plot(t_h1, U_h1[:, 1], label="h = 1")
     plt.xlabel("Temps")
-    plt.ylabel("W(t)")
-    plt.title("Convergence avec des petits pas de temps sur W(t)")
+    plt.ylabel("N(t)")
+    plt.title("Influence de grands pas de temps sur N(t)")
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(os.path.join(dossier, "pas_temps_W_convergence.png"), dpi=180)
+    plt.savefig(os.path.join(dossier, "pas_temps_N_grands_pas.png"), dpi=180)
+    plt.close()
+
+    
+    
+    #Comparaison des méthodes avec h = 1.5 sur N(t)
+
+    h_test = 1.5
+
+    t_euler_h15, U_euler_h15 = euler_explicite(u0, t0, tf, h_test)
+    t_rk4_h15, U_rk4_h15 = rk4(u0, t0, tf, h_test)
+    t_pf_h15, U_pf_h15 = euler_implicite_point_fixe(u0, t0, tf, h_test)
+    t_newton_h15, U_newton_h15 = euler_implicite_newton(u0, t0, tf, h_test)
+    
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_euler_h15, U_euler_h15[:, 1], label="Euler explicite")
+    plt.plot(t_rk4_h15, U_rk4_h15[:, 1], label="RK4")
+    plt.plot(t_pf_h15, U_pf_h15[:, 1], linewidth=2.2, label="Euler implicite point fixe")
+    plt.plot(t_newton_h15, U_newton_h15[:, 1], linewidth=2.5, label="Euler implicite Newton")
+    plt.xlabel("Temps")
+    plt.ylabel("N(t)")
+    plt.title("Comparaison des méthodes avec h = 1.5 : N(t)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(dossier, "comparaison_methodes_h15_N.png"), dpi=180)
     plt.close()
 
 
@@ -727,3 +753,4 @@ if __name__ == "__main__":
     print("RK4 :", round(temps_rk4, 4), "s")
     print("Euler implicite point fixe :", round(temps_pf, 4), "s")
     print("Euler implicite Newton + LU :", round(temps_newton, 4), "s")
+   
