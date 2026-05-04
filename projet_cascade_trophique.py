@@ -5,45 +5,48 @@ import matplotlib.pyplot as plt
 
 
 
-# PARAMÈTRES DU MODÈLE
+# PARAMÈTRES DU SUJET 
 
 
 # Végétation
 rV = 1.20
 KV = 500.0
-alphaN = 15.0
-nuN = 200.0
-alphaD = 8.0
-nuD = 100.0
-alphaB = 3.0
-nuB = 120.0
+
+aN = 15.0
+vN = 200.0
+
+aD = 8.0
+vD = 100.0
+
+aB = 3.0
+vB = 120.0
 
 # Ongulés principaux
 rN = 0.30
 KN = 7.0
-VstarN = 70.0
+Vetoile = 70.0
 thetaN = 4.0
 cWN = 7.5
-beta = 0.5
+b = 0.5
 cBN = 0.5
 hBN = 3.0
-deltaN = 0.05
+dN = 0.05
 
-# Cerfs
+# Ongulé secondaire
 rD = 0.50
 KD = 4.0
-VstarD = 50.0
+Vetoile_etoile = 50.0
 thetaD = 2.0
 cWD = 2.0
 hWD = 2.0
 cBD = 0.3
 hBD = 1.5
-deltaD = 0.08
+dD = 0.08
 
 # Loups
-epsilon1 = 0.25
-epsilon2 = 0.5
-eta = 0.01
+e1 = 0.25
+e2 = 0.5
+n = 0.01
 mW = 0.15
 muW = 0.10
 
@@ -54,7 +57,7 @@ mB = 0.08
 
 
 
-# CONDITIONS INITIALES
+# CONDITIONS I
 
 
 V0 = 440.0
@@ -62,41 +65,34 @@ N0 = 4.5
 D0 = 2.5
 W0 = 0.04
 B0 = 0.25
-
 u0 = np.array([V0, N0, D0, W0, B0])
-
 t0 = 0.0
 tf = 50.0
 h = 0.05
 
 
-# FONCTION DU SYSTÈME
 
 
 def F(t, u):
     V, N, D, W, B = u
 
-    kappaN = KN * V / (VstarN + V)
-    kappaD = KD * V / (VstarD + V)
+    kappaN = KN * V / (Vetoile + V)
+    kappaD = KD * V / (Vetoile_etoile + V)
 
-    phiW = cWN * N / (W + beta * N) + cWD * D / (hWD + D)
-    phiW = max(phiW, 1e-12) # pour ne pas avoir de valeurs négative
+    phiW = cWN * N / (W + b * N) + cWD * D / (hWD + D)
 
-    dV = rV * V * (1.0 - V / KV) - alphaN * V * N / (nuN + V) - alphaD * V * D / (nuD + V) - alphaB * V * B / (nuB + V)
+    dV_dt = rV * V * (1.0 - V / KV) - aN * V * N / (vN + V) - aD * V * D / (vD + V) - aB * V * B / (vB + V)
 
-    dN = rN * N * (1.0 - (N / kappaN) ** thetaN) - cWN * N * W / (W + beta * N) - cBN * N * B / (hBN + N) - deltaN * N
+    dN_dt = rN * N * (1.0 - (N / kappaN) ** thetaN) - cWN * N * W / (W + b * N) - cBN * N * B / (hBN + N) - dN * N
 
-    dD = rD * D * (1.0 - (D / kappaD) ** thetaD) - cWD * D * W / (hWD + D) - cBD * D * B / (hBD + D) - deltaD * D
+    dD_dt = rD * D * (1.0 - (D / kappaD) ** thetaD) - cWD * D * W / (hWD + D) - cBD * D * B / (hBD + D) - dD * D
 
-    dW = (epsilon1 * np.log(phiW + eta) - epsilon2) * W - mW * W - muW * (np.sin(np.pi * t) ** 2) * W
+    dW_dt = (e1 * np.log(phiW + n) - e2) * W - mW * W - muW * (np.sin(np.pi * t) ** 2) * W
 
-    dB = (eB * (cBN * N / (hBN + N) + cBD * D / (hBD + D)) + eV * alphaB * V / (nuB + V) - mB) * B
+    dB_dt = (eB * (cBN * N / (hBN + N) + cBD * D / (hBD + D)) + eV * aB * V / (vB + V) - mB) * B
 
-    return np.array([dV, dN, dD, dW, dB])
+    return np.array([dV_dt, dN_dt, dD_dt, dW_dt, dB_dt])
 
-
-
-# EULER EXPLICITE
 
 
 def euler_explicite(u0, t0, tf, h):
@@ -112,8 +108,6 @@ def euler_explicite(u0, t0, tf, h):
     return t, U
 
 
-
-# RK4
 
 
 def rk4(u0, t0, tf, h):
@@ -135,7 +129,6 @@ def rk4(u0, t0, tf, h):
 
 
 
-# FACTORISATION LU
 
 
 def decomposition_lu(A):
@@ -202,8 +195,6 @@ def resolution_lu(A, b):
 
 
 
-# JACOBIENNE NUMÉRIQUE
-
 
 def jacobienne_numerique(G, x):
     eps = 1e-6
@@ -224,7 +215,6 @@ def jacobienne_numerique(G, x):
 
 
 
-# NEWTON
 
 
 def newton(G, x0, tol=1e-9, max_iter=20):
@@ -243,9 +233,6 @@ def newton(G, x0, tol=1e-9, max_iter=20):
 
     return x
 
-
-
-# EULER IMPLICITE + NEWTON + LU
 
 
 def euler_implicite_newton(u0, t0, tf, h):
@@ -271,9 +258,6 @@ def euler_implicite_newton(u0, t0, tf, h):
 
     return t, U
 
-
-
-# EULER IMPLICITE + POINT FIXE
 
 
 def euler_implicite_point_fixe(u0, t0, tf, h, tol=1e-9, max_iter=200):
@@ -377,9 +361,7 @@ if __name__ == "__main__":
 
 
     # 2) Comparaison des méthodes avec h = 0.05
-    
 
-    # Comparaison méthodes avec h = 0.05 : N(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler, U_euler[:, 1], label="Euler explicite")
     plt.plot(t_rk4, U_rk4[:, 1], label="RK4")
@@ -394,7 +376,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_N.png"), dpi=180)
     plt.close()
 
-    # Comparaison méthodes avec h = 0.05 : D(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler, U_euler[:, 2], label="Euler explicite")
     plt.plot(t_rk4, U_rk4[:, 2], label="RK4")
@@ -409,7 +390,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_D.png"), dpi=180)
     plt.close()
 
-    # Comparaison méthodes avec h = 0.05 : W(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler, U_euler[:, 3], label="Euler explicite")
     plt.plot(t_rk4, U_rk4[:, 3], label="RK4")
@@ -424,7 +404,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h005_W.png"), dpi=180)
     plt.close()
 
-    # Comparaison méthodes avec h = 0.05 : B(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler, U_euler[:, 4], label="Euler explicite")
     plt.plot(t_rk4, U_rk4[:, 4], label="RK4")
@@ -440,9 +419,8 @@ if __name__ == "__main__":
     plt.close()
 
 
-    
     # 3) Comparaison des méthodes avec h = 0.5
-    
+
     h_grand = 0.5
 
     t_euler_hg, U_euler_hg = euler_explicite(u0, t0, tf, h_grand)
@@ -450,7 +428,6 @@ if __name__ == "__main__":
     t_pf_hg, U_pf_hg = euler_implicite_point_fixe(u0, t0, tf, h_grand)
     t_newton_hg, U_newton_hg = euler_implicite_newton(u0, t0, tf, h_grand)
 
-    # Comparaison méthodes avec h = 0.5 : N(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler_hg, U_euler_hg[:, 1], label="Euler explicite")
     plt.plot(t_rk4_hg, U_rk4_hg[:, 1], label="RK4")
@@ -465,7 +442,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_N.png"), dpi=180)
     plt.close()
 
-    # Comparaison méthodes avec h = 0.5 : D(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler_hg, U_euler_hg[:, 2], label="Euler explicite")
     plt.plot(t_rk4_hg, U_rk4_hg[:, 2], label="RK4")
@@ -480,7 +456,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_D.png"), dpi=180)
     plt.close()
 
-    # Comparaison méthodes avec h = 0.5 : W(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler_hg, U_euler_hg[:, 3], label="Euler explicite")
     plt.plot(t_rk4_hg, U_rk4_hg[:, 3], label="RK4")
@@ -495,7 +470,6 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_W.png"), dpi=180)
     plt.close()
 
-    # Comparaison méthodes avec h = 0.5 : B(t)
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler_hg, U_euler_hg[:, 4], label="Euler explicite")
     plt.plot(t_rk4_hg, U_rk4_hg[:, 4], label="RK4")
@@ -510,9 +484,9 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "comparaison_methodes_h05_B.png"), dpi=180)
     plt.close()
 
-    # 4) Influence du pas de temps sur W(t)
 
-    # Grands pas : influence du pas de temps
+    # 4) Influence du pas de temps sur W(t)  montrer divergence h entier
+
     t_h2, U_h2 = euler_implicite_newton(u0, t0, tf, 2.0)
     t_h15, U_h15 = euler_implicite_newton(u0, t0, tf, 1.5)
     t_h1, U_h1 = euler_implicite_newton(u0, t0, tf, 1.0)
@@ -531,13 +505,11 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig(os.path.join(dossier, "pas_temps_W_divergence.png"), dpi=180)
     plt.close()
-    
-    # Influence des grands pas de temps sur N(t)
 
     t_h2, U_h2 = euler_implicite_newton(u0, t0, tf, 2.0)
     t_h15, U_h15 = euler_implicite_newton(u0, t0, tf, 1.5)
     t_h1, U_h1 = euler_implicite_newton(u0, t0, tf, 1.0)
-    
+
     plt.figure(figsize=(8, 4))
     plt.plot(t_h2, U_h2[:, 1], label="h = 2")
     plt.plot(t_h15, U_h15[:, 1], label="h = 1.5")
@@ -551,9 +523,8 @@ if __name__ == "__main__":
     plt.savefig(os.path.join(dossier, "pas_temps_N_grands_pas.png"), dpi=180)
     plt.close()
 
-    
-    
-    #Comparaison des méthodes avec h = 1.5 sur N(t)
+
+    # Comparaison des méthodes avec h = 1.5 sur N(t)
 
     h_test = 1.5
 
@@ -561,7 +532,7 @@ if __name__ == "__main__":
     t_rk4_h15, U_rk4_h15 = rk4(u0, t0, tf, h_test)
     t_pf_h15, U_pf_h15 = euler_implicite_point_fixe(u0, t0, tf, h_test)
     t_newton_h15, U_newton_h15 = euler_implicite_newton(u0, t0, tf, h_test)
-    
+
     plt.figure(figsize=(8, 4))
     plt.plot(t_euler_h15, U_euler_h15[:, 1], label="Euler explicite")
     plt.plot(t_rk4_h15, U_rk4_h15[:, 1], label="RK4")
@@ -746,11 +717,10 @@ if __name__ == "__main__":
     plt.close()
 
 
-    # 7) Affichage console
+     # 7) Affichage console
 
     print("Temps de calcul")
     print("Euler explicite :", round(temps_euler, 4), "s")
     print("RK4 :", round(temps_rk4, 4), "s")
     print("Euler implicite point fixe :", round(temps_pf, 4), "s")
     print("Euler implicite Newton + LU :", round(temps_newton, 4), "s")
-   
